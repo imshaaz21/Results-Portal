@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import datetime
 from utils.auth import AdminAuth
 from utils.data_processor import DataProcessor
 
@@ -10,9 +11,24 @@ st.set_page_config(page_title="Results of Focus Stride 2024", layout="centered",
 UPLOADED_FILE_PATH = "uploaded_results.xlsx"
 
 
+def display_last_updated():
+    """Displays the last updated time of the uploaded file."""
+    try:
+        if os.path.exists(UPLOADED_FILE_PATH):
+            last_modified_time = os.path.getmtime(UPLOADED_FILE_PATH)
+            last_updated = datetime.datetime.fromtimestamp(last_modified_time)
+            st.info(
+                f"Last updated: {last_updated.strftime('%Y-%m-%d %H:%M')}")
+        else:
+            st.warning("No uploaded file found.")
+    except Exception as e:
+        st.error(f"An error occurred while retrieving the last updated time: {e}")
+
+
 def display_admin_section(processor):
     """Displays the Admin upload section and zone summary if the file is uploaded successfully."""
     st.subheader("Admin Section: Upload Results Excel")
+    display_last_updated()
     uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="file_uploader")
 
     if uploaded_file:
@@ -93,8 +109,12 @@ def main():
     st.title("Results of Focus Stride 2024")
 
     # Initialize authentication and data processor
-    auth = AdminAuth()
-    processor = DataProcessor()
+    try:
+        auth = AdminAuth()
+        processor = DataProcessor()
+    except Exception as e:
+        st.error(f"An error occurred during initialization: {e}")
+        return
 
     # If uploaded file exists, load the data
     if os.path.exists(UPLOADED_FILE_PATH):
