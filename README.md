@@ -28,6 +28,5 @@ docker build -t results-portal .
 docker run -p 8501:8501 -e ADMIN_PASSWORD="admin" results-portal
 ```
 
-
 ### Environment Variables
 ADMIN_PASSWORD: Set this variable to the desired admin password.
