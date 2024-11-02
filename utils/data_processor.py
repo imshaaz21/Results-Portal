@@ -38,6 +38,8 @@ class DataProcessor:
             else:
                 df['Combined_Maths'] = np.nan
 
+            df['Z-Score'] = df['Z-Score'].astype(float).round(4)
+            
             return df
         except Exception as e:
             raise ValueError(f"Error while processing the sheet: {e}")
